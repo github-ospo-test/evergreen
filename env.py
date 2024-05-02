@@ -121,7 +121,10 @@ def get_env_vars(test: bool = False) -> tuple[
     gh_app_private_key_bytes = os.environ.get("GH_APP_PRIVATE_KEY", "").encode("utf8")
     gh_app_installation_id = get_int_env_var("GH_APP_INSTALLATION_ID")
 
-    if gh_app_id and (not gh_app_private_key_bytes or not gh_app_installation_id):
+    # Replace \\n with \n in the private key in case they are already escaped
+    unescaped_gh_app_private_key = gh_app_private_key_bytes.replace("\\n", "\n")
+
+    if gh_app_id and (not unescaped_gh_app_private_key or not gh_app_installation_id):
         raise ValueError(
             "GH_APP_ID set and GH_APP_INSTALLATION_ID or GH_APP_PRIVATE_KEY variable not set"
         )
